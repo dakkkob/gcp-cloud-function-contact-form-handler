@@ -57,6 +57,7 @@ Example `CONFIG` structure:
 		}	
 	}
 }
+```
 
 ## Deployment Guide
 
