@@ -124,7 +124,8 @@ To ensure your function operates smoothly for both regular use and automated tes
 The request will look as usual, even the g-recaptcha-response field is kept and used to provide the secret key for validation:
 
 ```json
-{    "name": "John Doe",
+{
+    "name": "John Doe",
     "email": "johndoe@example.com",
     "message": "This is a test message.",
     "g-recaptcha-response": "your-secret-key"
