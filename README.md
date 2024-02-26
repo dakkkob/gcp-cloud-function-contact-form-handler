@@ -13,6 +13,7 @@ Key features include:
 - **Python3.12**
 - **Reply-To:** Field is populated from the email inputted by user.
 - **Email Subject:** is constructed from SMTP_SUBJECT field plus domain name of the originating request
+- **Validation:** it is possible to bypass re-captcha validation for given validation domain, for purpose of having a functional ping
 
 ## Configuration
 
@@ -36,6 +37,7 @@ Example `CONFIG` structure:
   "SMTP_PASSWORD": "your-password",
   "REQUIRED_FIELDS": "name,email,message,g-recaptcha-response",
   "SUCCESS_MESSAGE": "Thank you for your message. We will be in touch shortly.",
+  "VALIDATION_DOMAIN": "",
   "DOMAIN_CONFIG":  {
 	"example.com": {
 		"recipient": "contact@example.com",
@@ -99,6 +101,36 @@ This guide outlines the steps to deploy the Contact Form Backend Service using G
 1. **Submit a test entry** through your contact form.
 2. **Check the email** address configured as the recipient to ensure the message is received.
 3. **Verify reCAPTCHA validation** and email sending functionalities are working as expected.
+
+#### OPTIONAL: Functional ping
+
+To ensure your function operates smoothly for both regular use and automated testing/monitoring, you can bypass the reCAPTCHA requirement for test requests. This involves setting the request's Origin header to match a predefined "VALIDATION_DOMAIN" in your configuration. For these test requests, use a "secret_key" within the domain's configuration block instead of the usual "recaptcha_secret_key". This approach allows you to validate the function's responsiveness without the need for reCAPTCHA verification. Here's an example configuration for the special testing domain:
+
+ json ```
+   "VALIDATION_DOMAIN": "validation.example.com",
+   "DOMAIN_CONFIG":  {
+	"validation.example.com": {
+		"recipient": "validator@example.com",
+		"secret_key": "your-secret-key",
+		"email_body_fields": {
+          "name": "Name",
+          "email": "Email",
+          "message": "Message"
+            }
+		}	
+	}
+```
+
+The request will look as usual, even the g-recaptcha-response field is kept and used to provide the secret key for validation:
+
+json ```
+{
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "message": "This is a test message.",
+    "g-recaptcha-response": "your-secret-key"
+}
+```
 
 ### Troubleshooting
 
