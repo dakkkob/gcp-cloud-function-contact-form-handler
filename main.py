@@ -11,7 +11,6 @@ from email.mime.text import MIMEText
 
 # Assuming CONFIG is automatically populated with the JSON secret content
 CONFIG = json.loads(os.getenv("CONFIG"))
-VALIDATION_DOMAIN = "cloudscheduler.google.com"
 
 def is_email_valid(email):
     """Check if the email address is valid."""
@@ -20,7 +19,7 @@ def is_email_valid(email):
 
 def is_recaptcha_valid(recaptcha_response, domain):
     """Verify reCAPTCHA response with Google's API."""
-    if domain == VALIDATION_DOMAIN:
+    if domain == CONFIG['VALIDATION_DOMAIN']:
         secret_key = CONFIG['DOMAIN_CONFIG'].get(domain, {}).get('secret_key', '')
         return recaptcha_response == secret_key
 
