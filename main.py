@@ -11,6 +11,7 @@ from email.mime.text import MIMEText
 
 # Assuming CONFIG is automatically populated with the JSON secret content
 CONFIG = json.loads(os.getenv("CONFIG"))
+VALIDATION_DOMAIN = "cloudscheduler.google.com"
 
 def is_email_valid(email):
     """Check if the email address is valid."""
@@ -19,6 +20,10 @@ def is_email_valid(email):
 
 def is_recaptcha_valid(recaptcha_response, domain):
     """Verify reCAPTCHA response with Google's API."""
+    if domain == VALIDATION_DOMAIN:
+        secret_key = CONFIG['DOMAIN_CONFIG'].get(domain, {}).get('secret_key', '')
+        return recaptcha_response == secret_key
+
     secret_key = CONFIG['DOMAIN_CONFIG'].get(domain, {}).get('recaptcha_secret_key', '')
     verification_url = 'https://www.google.com/recaptcha/api/siteverify'
     payload = {'secret': secret_key, 'response': recaptcha_response}
@@ -91,7 +96,7 @@ def handler(request):
     # Validate required fields
     missing_fields = [field for field in CONFIG.get('REQUIRED_FIELDS', '').split(',') if not form_data.get(field)]
     if missing_fields:
-        return make_response_with_cors({'success': False, 'message': f'Required fields missing.'}, 400, origin=origin)
+        return make_response_with_cors({'success': False, 'message': 'Required fields missing.'}, 400, origin=origin)
 
     if not is_recaptcha_valid(form_data.get('g-recaptcha-response'), domain):
         return make_response_with_cors({'success': False, 'message': 'reCAPTCHA validation failed.'}, 400, origin=origin)
