@@ -107,6 +107,7 @@ This guide outlines the steps to deploy the Contact Form Backend Service using G
 To ensure your function operates smoothly for both regular use and automated testing/monitoring, you can bypass the reCAPTCHA requirement for test requests. This involves setting the request's Origin header to match a predefined "VALIDATION_DOMAIN" in your configuration. For these test requests, use a "secret_key" within the domain's configuration block instead of the usual "recaptcha_secret_key". This approach allows you to validate the function's responsiveness without the need for reCAPTCHA verification. Here's an example configuration for the special testing domain:
 
  json ```
+ {
    "VALIDATION_DOMAIN": "validation.example.com",
    "DOMAIN_CONFIG":  {
 	"validation.example.com": {
@@ -119,6 +120,7 @@ To ensure your function operates smoothly for both regular use and automated tes
             }
 		}	
 	}
+ }
 ```
 
 The request will look as usual, even the g-recaptcha-response field is kept and used to provide the secret key for validation:
